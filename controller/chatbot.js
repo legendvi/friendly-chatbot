@@ -1,7 +1,13 @@
 import dialogflow from "dialogflow";
 import config from "../configs/keys.js";
-import structjson from "../configs/structjson.js";
-const sessionClient = new dialogflow.SessionsClient();
+// import structjson from "../configs/structjson.js";
+import { struct } from "pb-util/build/index.js";
+const projecID = config.googleProjecID;
+const credentials = {
+  client_email: config.client_email,
+  private_key: config.private_key,
+};
+const sessionClient = new dialogflow.SessionsClient({ projecID, credentials });
 const sessionPath = sessionClient.sessionPath(
   config.googleProjecID,
   config.dialogFlowSessionID
@@ -33,7 +39,7 @@ export const eventQuery = async (req, res, next) => {
     queryInput: {
       event: {
         name: req.body.event,
-        parameters: structjson.jsonToStructProto(req.body.parameters),
+        parameters: struct.encode(req.body.parameters),
         languageCode: config.dialogFlowSessionLanguageCode,
       },
     },
